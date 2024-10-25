@@ -56,7 +56,7 @@ def transform_ohe(test, train):
 def main():
     st.title("Assessment 3 - Predicting flight prices")
     # ======================================================================
-    # part 1 - read in the data and get rid of duplicates
+    # Step 1 - read in the data and get rid of duplicates
     df = pd.read_csv('Clean_Dataset.csv')
     df = pd.DataFrame.drop_duplicates(df)
     df = df.drop(columns = ["Unnamed: 0"])
@@ -65,6 +65,9 @@ def main():
     st.dataframe(df)
 
     st.write(f"number of flights: {df["flight"].value_counts()}")
+
+    st.subheader("Observations")
+    st.write("Uhhhh what is there to observe? I mean there wasn't any duplicates, it was a clean dataset so yeah there's that.")
 
     # ======================================================================
     # Step 2 - problem statement
@@ -80,6 +83,9 @@ def main():
 
     st.dataframe(df)
 
+    st.subheader("Observations")
+    st.write("The data set is pretty big, with just over 300,000 data rows. Our dependent or predictor variable is going to be price while the rest are independent variables.")
+
     # ======================================================================
     # Step 3 - Visualising distribution of target variable
     st.divider()
@@ -89,9 +95,12 @@ def main():
     ax.hist(df["price"], bins = "auto")
     ax.set_title("Distribution of Price")
     ax.set_yscale("log")
-    ax.set_ylabel("Amount")
+    ax.set_ylabel("Frequency")
     ax.set_xlabel("Price")
     st.pyplot(fig)
+
+    st.subheader("Observations")
+    st.write("The frequency of price has a large positive skew. There is so many entries for the lower prices that a log scale for the frequency is required to visualise how many entries there are in the higher prices.")
 
     # ======================================================================
     # Step 4 - Basic data exploration
@@ -113,6 +122,9 @@ def main():
     st.dataframe(df)
 
     st.dataframe(pd.DataFrame(df.dtypes, columns = ["Data Type"]))
+
+    st.subheader("Observations")
+    st.write("Lots of continuous data columns, we observed that the shear number of different flights were useless and arrival time/duration were dependent after the fact.")
 
     # ======================================================================
     # Step 5 - EDA of data
@@ -160,6 +172,13 @@ def main():
     sns.boxplot(x = df['price'], ax = ax[1])
     st.pyplot(fig)
 
+    st.subheader("Observations")
+    st.markdown("""
+                - The two most popular airlines also had the most expensive flights.
+                - Each city has roughly the same amount of mentions for destination and source. This makes sense as a plane has to leave an airport that it arrives at so there is roughly a 1 for 1 source and destination for each airport.
+                - There was a really high spike in frequency for days left to buy tickets once the value got to about 48. I'm assuming this is people buying tickets as soon as they get released.
+             """)
+
     # ======================================================================
     # Step 6 - Removal of outliers
     st.divider()
@@ -187,6 +206,9 @@ def main():
     st.write("### Dataset after removing outliers")
     st.write(df)
 
+    st.subheader("Observations")
+    st.write("There was only a small amount of outliers as the frequency of values for each of the variables drops off significantly.")
+
     # ======================================================================
     # Step 7 - Missing Value Analysis
     st.divider()
@@ -194,6 +216,9 @@ def main():
 
     missing_value_count = df.isna().sum()
     st.dataframe(missing_value_count, column_config={"0": "Missing values count"})
+
+    st.subheader("Observations")
+    st.write("There is no missing values.")
 
     # ======================================================================
     # Step 8 - Feature Selection
@@ -242,6 +267,9 @@ def main():
     sns.boxplot(data = df, x = "source_city", y = "price", ax = ax)
     st.pyplot(fig)
 
+    st.subheader("Observations")
+    st.write("We observed that everything was correlated pretty closely.")
+
     # ======================================================================
     # Step 9 - Relationship Analysis Between Categorical and Continuous Variables
     st.divider()
@@ -285,6 +313,9 @@ def main():
 
         st.pyplot(fig)
 
+    st.subheader("Observations")
+    st.write("We observed that the relationship between categorical and continours data were also closely correlated with the P value being really small or even 0, while the F value changing, was in a good range.")
+
     # ======================================================================
     # Step 10 - Selecting final variables for AI model
     st.divider()
@@ -297,6 +328,9 @@ def main():
                 - Source City
                 - Destination City
                 """)
+
+    st.subheader("Observations")
+    st.write("The variables chosen were based on step 4 and the removal of some data columns such as flight number, arrival time and duration.")
 
     # ======================================================================
     # Step 11 - Converting categorical data for AI model
@@ -312,6 +346,9 @@ def main():
     st.dataframe(X)
     # target
     Y = df["price"]
+
+    st.subheader("Observations")
+    st.write("This is the step that caused us to drop the flight number as a feature. This step caused there to be over 1000 columns in the dataset due to One-Hot encoding.")
 
     # ======================================================================
     # Step 12 - Data split and transformation
@@ -349,6 +386,9 @@ def main():
                 > Test: {Y_test.shape}
                 """)
 
+    st.subeader("Observations")
+    st.write("We observed that data training and testing took a very long time, and in the end, ended up being pretty close together.")
+
     # ======================================================================
     # Step 13 - Running multiple models
     st.divider()
@@ -367,6 +407,9 @@ def main():
         r2 = r2_score(Y_test, prediction)
         r2_scores[name] = r2
         st.write(f"r2: {r2}")
+
+    st.subheader("Observations")
+    st.write("We observed that training and running the different models, took less time than the first time.")
 
     # ======================================================================
     # Step 14 - Best model
@@ -397,6 +440,9 @@ def main():
 
     best_model_filename = "best_model.sav"
     joblib.dump(best_model, best_model_filename)
+
+    st.subheader("Observations")
+    st.write("We obseverd that the best model was random forest, however knn/k-ne.")
 
     # ======================================================================
     # Step 15 - Model deployment and showcase
